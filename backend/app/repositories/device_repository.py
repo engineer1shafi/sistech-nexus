@@ -4,6 +4,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.device import Device
+from app.models.device_type import DeviceType
+from app.models.snmp_profile import SNMPProfile
+from app.models.vendor import Vendor
 from app.schemas.device import DeviceCreate, DeviceUpdate
 
 
@@ -11,17 +14,42 @@ class DeviceRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def _get_vendor(self, name: str | None) -> Vendor | None:
+        if not name:
+            return None
+
+        result = await self.db.execute(select(Vendor).where(Vendor.name == name))
+        return result.scalar_one_or_none()
+
+    async def _get_device_type(self, name: str | None) -> DeviceType | None:
+        if not name:
+            return None
+
+        result = await self.db.execute(select(DeviceType).where(DeviceType.name == name))
+        return result.scalar_one_or_none()
+
+    async def _get_snmp_profile(self, version: str | None) -> SNMPProfile | None:
+        result = await self.db.execute(
+            select(SNMPProfile).where(SNMPProfile.name == "Default SNMP v2c")
+        )
+        return result.scalar_one_or_none()
+
     async def create(self, payload: DeviceCreate) -> Device:
+        vendor = await self._get_vendor(payload.vendor)
+        device_type = await self._get_device_type(payload.device_type)
+        snmp_profile = await self._get_snmp_profile(payload.snmp_version)
+
         device = Device(
             organization_id=payload.organization_id,
             hostname=payload.hostname,
             ip_address=str(payload.ip_address),
-            vendor=payload.vendor,
+            vendor_id=vendor.id if vendor else None,
+            device_type_id=device_type.id if device_type else None,
+            snmp_profile_id=snmp_profile.id if snmp_profile else None,
             model=payload.model,
             serial_number=payload.serial_number,
-            device_type=payload.device_type,
-            snmp_version=payload.snmp_version,
-            snmp_port=payload.snmp_port,
+            status="unknown",
+            is_enabled=True,
         )
 
         self.db.add(device)
