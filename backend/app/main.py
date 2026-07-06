@@ -1,24 +1,20 @@
 from fastapi import FastAPI
 
+from app.api.health import router
+from app.core.config import settings
+
 app = FastAPI(
-    title="SISTECH NEXUS",
-    version="0.0.1-dev",
-    description="Enterprise Network Operations Platform",
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
 )
+
+app.include_router(router)
 
 
 @app.get("/")
-async def root() -> dict:
-    return {
-        "name": "SISTECH NEXUS",
-        "version": "0.0.1-dev",
-        "status": "running",
-    }
+async def root():
 
-
-@app.get("/health")
-async def health() -> dict:
     return {
-        "status": "healthy",
-        "service": "sistech-nexus-api",
+        "name": settings.APP_NAME,
+        "version": settings.APP_VERSION,
     }
