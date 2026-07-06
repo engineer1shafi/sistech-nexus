@@ -5,15 +5,22 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.config import settings
 from app.models import Base
+
+# Import all models for Alembic autogenerate
 from app.models.device import Device
+from app.models.device_type import DeviceType
 from app.models.organization import Organization
 from app.models.permission import Permission
 from app.models.role import Role
 from app.models.role_permission import RolePermission
+from app.models.site import Site
+from app.models.snmp_profile import SNMPProfile
 from app.models.user import User
 from app.models.user_role import UserRole
+from app.models.vendor import Vendor
 
 config = context.config
+
 config.set_main_option(
     "sqlalchemy.url",
     settings.DATABASE_URL.replace("+asyncpg", "+psycopg"),
