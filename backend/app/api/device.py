@@ -53,3 +53,21 @@ async def delete_device(
 ):
     service = DeviceService(db)
     return await service.delete_device(device_id)
+
+
+@router.post("/{device_id}/snmp-test")
+async def snmp_test_device(
+    device_id: UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    service = DeviceService(db)
+    return await service.snmp_test_device(device_id)
+
+
+@router.post("/{device_id}/discover")
+async def discover_device(
+    device_id: UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    service = DeviceService(db)
+    return await service.discover_device(device_id)
