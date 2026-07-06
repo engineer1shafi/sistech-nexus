@@ -2,34 +2,48 @@ import asyncio
 
 from fastapi import APIRouter
 
-from app.schemas.snmp import SNMPTestRequest, SNMPTestResponse
-from app.snmp.simple_v2c import test_device
+from app.schemas.snmp import SNMPSystemResponse, SNMPTestRequest
+from app.snmp.oids import SYSTEM_OIDS
+from app.snmp.simple_v2c import snmp_get
 
 router = APIRouter(prefix="/snmp", tags=["SNMP"])
 
 
-@router.post("/test", response_model=SNMPTestResponse)
-async def snmp_test(payload: SNMPTestRequest):
-    try:
-        result = await asyncio.to_thread(
-            test_device,
+async def get_system_info(payload: SNMPTestRequest) -> dict:
+    data = {}
+
+    for key, oid in SYSTEM_OIDS.items():
+        data[key] = await asyncio.to_thread(
+            snmp_get,
             str(payload.ip_address),
             payload.community,
+            oid,
             payload.port,
             payload.timeout,
         )
 
-        return SNMPTestResponse(
+    return data
+
+
+@router.post("/test", response_model=SNMPSystemResponse)
+async def snmp_test(payload: SNMPTestRequest):
+    try:
+        result = await get_system_info(payload)
+
+        return SNMPSystemResponse(
             status="success",
             ip_address=str(payload.ip_address),
-            sys_name=result.get("sys_name"),
-            sys_descr=result.get("sys_descr"),
-            sys_uptime=result.get("sys_uptime"),
+            **result,
         )
 
     except Exception as exc:
-        return SNMPTestResponse(
+        return SNMPSystemResponse(
             status="failed",
             ip_address=str(payload.ip_address),
             error=str(exc),
         )
+
+
+@router.post("/system", response_model=SNMPSystemResponse)
+async def snmp_system(payload: SNMPTestRequest):
+    return await snmp_test(payload)
