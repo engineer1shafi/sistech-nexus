@@ -7,6 +7,8 @@ from app.core.config import settings
 from app.core.logger import setup_logger
 from app.api.auth import router as auth_router
 from app.api.device import router as device_router
+from app.api.snmp import router as snmp_router
+
 
 setup_logger()
 logger.info("SISTECH NEXUS starting...")
@@ -21,6 +23,8 @@ app.include_router(health_router)
 app.include_router(database_router)
 app.include_router(auth_router)
 app.include_router(device_router)
+app.include_router(snmp_router)
+
 
 
 @app.get("/")

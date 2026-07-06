@@ -12,3 +12,5 @@ python-multipart
 loguru
 psycopg[binary]
 email-validator
+pysnmp
+bcrypt==4.0.1
