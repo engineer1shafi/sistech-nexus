@@ -1,0 +1,55 @@
+from uuid import UUID
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.database.session import get_db
+from app.schemas.device import DeviceCreate, DeviceResponse, DeviceUpdate
+from app.services.device_service import DeviceService
+
+router = APIRouter(prefix="/devices", tags=["Devices"])
+
+
+@router.post("", response_model=DeviceResponse)
+async def create_device(
+    payload: DeviceCreate,
+    db: AsyncSession = Depends(get_db),
+):
+    service = DeviceService(db)
+    return await service.create_device(payload)
+
+
+@router.get("", response_model=list[DeviceResponse])
+async def list_devices(
+    db: AsyncSession = Depends(get_db),
+):
+    service = DeviceService(db)
+    return await service.list_devices()
+
+
+@router.get("/{device_id}", response_model=DeviceResponse)
+async def get_device(
+    device_id: UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    service = DeviceService(db)
+    return await service.get_device(device_id)
+
+
+@router.put("/{device_id}", response_model=DeviceResponse)
+async def update_device(
+    device_id: UUID,
+    payload: DeviceUpdate,
+    db: AsyncSession = Depends(get_db),
+):
+    service = DeviceService(db)
+    return await service.update_device(device_id, payload)
+
+
+@router.delete("/{device_id}")
+async def delete_device(
+    device_id: UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    service = DeviceService(db)
+    return await service.delete_device(device_id)
