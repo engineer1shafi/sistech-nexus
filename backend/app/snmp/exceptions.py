@@ -1,14 +1,18 @@
 class SNMPError(Exception):
-    pass
+    """Base exception for SNMP failures."""
 
 
 class SNMPTimeoutError(SNMPError):
-    pass
+    """Raised when an SNMP request times out."""
 
 
 class SNMPAuthenticationError(SNMPError):
-    pass
+    """Raised when SNMP authentication fails."""
+
+
+class SNMPWalkError(SNMPError):
+    """Raised when a walk operation cannot be completed."""
 
 
 class SNMPResponseError(SNMPError):
-    pass
+    """Raised when an SNMP response is malformed or unexpected."""
