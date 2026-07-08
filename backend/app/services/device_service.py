@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.device import Device
 from app.repositories.device_repository import DeviceRepository
 from app.schemas.device import DeviceCreate, DeviceResponse, DeviceUpdate
+from app.discovery.interface_discovery import InterfaceDiscoveryService
 
 
 class DeviceService:
@@ -120,3 +121,27 @@ class DeviceService:
             "ip_address": device.ip_address,
             "message": "Discovery endpoint ready. Interface discovery will be added in next commit.",
         }
+
+    async def discover_interfaces(self, device_id: UUID) -> dict:
+        device = await self.repository.get_by_id(device_id)
+
+        if not device:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Device not found",
+            )
+
+        if not device.snmp_profile:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="SNMP profile not assigned to this device",
+            )
+
+        service = InterfaceDiscoveryService(self.repository.db, None)
+        return await service.discover_interfaces(
+            device_id=device.id,
+            host=device.ip_address,
+            community=device.snmp_profile.community or "public",
+            port=device.snmp_profile.port,
+            timeout=device.snmp_profile.timeout,
+        )

@@ -71,3 +71,12 @@ async def discover_device(
 ):
     service = DeviceService(db)
     return await service.discover_device(device_id)
+
+
+@router.post("/{device_id}/discover/interfaces")
+async def discover_interfaces(
+    device_id: UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    service = DeviceService(db)
+    return await service.discover_interfaces(device_id)
