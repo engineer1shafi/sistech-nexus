@@ -30,3 +30,10 @@ class SNMPPoller:
                 result[f"{name}_error"] = str(exc)
 
         return result
+
+    async def walk_subtree(
+        self,
+        oid: str,
+        limit: int | None = None,
+    ) -> list[dict[str, str | None]]:
+        return await self.client.walk(oid, limit=limit)

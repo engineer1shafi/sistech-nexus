@@ -18,6 +18,7 @@ from app.models.snmp_profile import SNMPProfile
 from app.models.user import User
 from app.models.user_role import UserRole
 from app.models.vendor import Vendor
+from app.models.interface import Interface
 
 config = context.config
 

@@ -13,6 +13,28 @@ export type CreateDevicePayload = {
   snmp_port: number;
 };
 
+export type SNMPWalkPayload = {
+  ip_address: string;
+  community?: string;
+  port?: number;
+  timeout?: number;
+  oid: string;
+  limit?: number | null;
+};
+
+export type SNMPWalkResult = {
+  oid: string;
+  value: string | null;
+};
+
+export type SNMPWalkResponse = {
+  status: string;
+  ip_address: string;
+  oid: string;
+  results: SNMPWalkResult[];
+  error?: string | null;
+};
+
 export async function getDevices(): Promise<Device[]> {
   const response = await api.get<Device[]>("/devices");
   return response.data;
@@ -20,5 +42,10 @@ export async function getDevices(): Promise<Device[]> {
 
 export async function createDevice(payload: CreateDevicePayload): Promise<Device> {
   const response = await api.post<Device>("/devices", payload);
+  return response.data;
+}
+
+export async function runSNMPWalk(payload: SNMPWalkPayload): Promise<SNMPWalkResponse> {
+  const response = await api.post<SNMPWalkResponse>("/snmp/walk", payload);
   return response.data;
 }

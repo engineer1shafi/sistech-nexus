@@ -8,6 +8,20 @@ class SNMPTestRequest(BaseModel):
     timeout: int = 3
 
 
+class SNMPWalkRequest(BaseModel):
+    ip_address: IPvAnyAddress
+    community: str = "public"
+    port: int = 161
+    timeout: int = 3
+    oid: str
+    limit: int | None = None
+
+
+class SNMPWalkResult(BaseModel):
+    oid: str
+    value: str | None = None
+
+
 class SNMPSystemResponse(BaseModel):
     status: str
     ip_address: str
@@ -17,6 +31,14 @@ class SNMPSystemResponse(BaseModel):
     sys_uptime: str | None = None
     sys_contact: str | None = None
     sys_location: str | None = None
+    error: str | None = None
+
+
+class SNMPWalkResponse(BaseModel):
+    status: str
+    ip_address: str
+    oid: str
+    results: list[SNMPWalkResult] = []
     error: str | None = None
 
 

@@ -60,7 +60,7 @@ class DeviceService:
         updated = await self.repository.update(device, payload)
         return self._to_response(updated)
 
-    async def delete_device(self, device_id: UUID):
+    async def delete_device(self, device_id: UUID) -> dict:
         device = await self.repository.get_by_id(device_id)
 
         if not device:
@@ -71,10 +71,9 @@ class DeviceService:
 
         await self.repository.soft_delete(device)
 
-        return {
-            "message": "Device deleted successfully"
-        }
-            async def snmp_test_device(self, device_id: UUID):
+        return {"message": "Device deleted successfully"}
+
+    async def snmp_test_device(self, device_id: UUID) -> dict:
         device = await self.repository.get_by_id(device_id)
 
         if not device:
@@ -106,7 +105,7 @@ class DeviceService:
             **result,
         }
 
-    async def discover_device(self, device_id: UUID):
+    async def discover_device(self, device_id: UUID) -> dict:
         device = await self.repository.get_by_id(device_id)
 
         if not device:
