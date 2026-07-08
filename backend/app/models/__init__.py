@@ -14,6 +14,7 @@ from app.models.vendor import Vendor
 from app.models.interface import Interface
 from app.models.neighbor import Neighbor
 from app.models.topology_link import TopologyLink
+from app.models.polling_policy import PollingPolicy
 
 __all__ = [
     "Base",
@@ -33,4 +34,5 @@ __all__ = [
     "Interface",
     "Neighbor",
     "TopologyLink",
+    "PollingPolicy",
 ]

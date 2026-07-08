@@ -58,3 +58,8 @@ class Device(Entity):
     vendor = relationship("Vendor", lazy="selectin")
     device_type = relationship("DeviceType", lazy="selectin")
     snmp_profile = relationship("SNMPProfile", lazy="selectin")
+    polling_policy_id: Mapped[str | None] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("polling_policies.id"), nullable=True, index=True
+    )
+
+    polling_policy = relationship("PollingPolicy", lazy="selectin")
