@@ -80,3 +80,12 @@ async def discover_interfaces(
 ):
     service = DeviceService(db)
     return await service.discover_interfaces(device_id)
+
+
+@router.post("/{device_id}/discover/lldp")
+async def discover_lldp(
+    device_id: UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    service = DeviceService(db)
+    return await service.discover_lldp(device_id)

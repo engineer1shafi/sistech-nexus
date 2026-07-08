@@ -19,6 +19,8 @@ from app.models.user import User
 from app.models.user_role import UserRole
 from app.models.vendor import Vendor
 from app.models.interface import Interface
+from app.models.neighbor import Neighbor
+from app.models.topology_link import TopologyLink
 
 config = context.config
 
