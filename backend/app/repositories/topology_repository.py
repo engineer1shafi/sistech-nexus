@@ -16,6 +16,10 @@ class TopologyRepository:
         )
         return list(result.scalars().all())
 
+    async def list_all(self) -> list[TopologyLink]:
+        result = await self.db.execute(select(TopologyLink))
+        return list(result.scalars().all())
+
     async def create(self, data: dict) -> TopologyLink:
         t = TopologyLink(**data)
         self.db.add(t)

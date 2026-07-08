@@ -8,6 +8,7 @@ from app.core.logger import setup_logger
 from app.api.auth import router as auth_router
 from app.api.device import router as device_router
 from app.api.snmp import router as snmp_router
+from app.api.topology import router as topology_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.interface import router as interface_router
 
@@ -33,6 +34,7 @@ app.include_router(auth_router)
 app.include_router(device_router)
 app.include_router(snmp_router)
 app.include_router(interface_router)
+app.include_router(topology_router)
 
 
 
