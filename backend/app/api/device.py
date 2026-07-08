@@ -64,6 +64,15 @@ async def snmp_test_device(
     return await service.snmp_test_device(device_id)
 
 
+@router.post("/{device_id}/poll")
+async def poll_device(
+    device_id: UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    service = DeviceService(db)
+    return await service.poll_device(device_id)
+
+
 @router.post("/{device_id}/discover")
 async def discover_device(
     device_id: UUID,

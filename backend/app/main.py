@@ -10,6 +10,7 @@ from app.api.device import router as device_router
 from app.api.snmp import router as snmp_router
 from app.api.topology import router as topology_router
 from app.api.polling_policy import router as polling_policy_router
+from app.api.metrics import router as metrics_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.interface import router as interface_router
 
@@ -37,6 +38,7 @@ app.include_router(snmp_router)
 app.include_router(interface_router)
 app.include_router(topology_router)
 app.include_router(polling_policy_router)
+app.include_router(metrics_router)
 
 
 

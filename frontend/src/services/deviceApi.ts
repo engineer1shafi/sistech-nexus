@@ -78,3 +78,8 @@ export async function discoverInterfaces(deviceId: string): Promise<any> {
   const response = await api.post(`/devices/${deviceId}/discover/interfaces`);
   return response.data;
 }
+
+export async function pollDevice(deviceId: string): Promise<any> {
+  const response = await api.post(`/devices/${deviceId}/poll`);
+  return response.data;
+}
