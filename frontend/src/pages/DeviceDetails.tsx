@@ -4,8 +4,13 @@ import AppLayout from "../layouts/AppLayout";
 import DeviceInfoCard from "../components/device/DeviceInfoCard";
 import InterfaceTable from "../components/device/InterfaceTable";
 import DiscoveryButton from "../components/device/DiscoveryButton";
+import PollButton from "../components/device/PollButton";
 import { getDevice, getDeviceInterfaces, type InterfaceItem } from "../services/deviceApi";
 import type { Device } from "../types/device";
+import PageHeader from "../components/ui/PageHeader";
+import Card from "../components/ui/Card";
+import EmptyState from "../components/ui/EmptyState";
+import LoadingState from "../components/ui/LoadingState";
 
 export default function DeviceDetails() {
   const { id } = useParams();
@@ -40,32 +45,32 @@ export default function DeviceDetails() {
 
   return (
     <AppLayout>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Device Details</h1>
-          <p className="text-slate-500">Device and interface details</p>
-        </div>
-        <Link to="/devices" className="text-sm text-slate-400 hover:underline">Back to devices</Link>
-      </div>
+      <PageHeader title="Device Details" subtitle="Device and interface details" actions={<Link to="/devices" className="text-sm text-slate-400 hover:underline">Back to devices</Link>} />
 
       {loading || !device ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center text-slate-500">Loading device...</div>
+        <Card>
+          <LoadingState message="Loading device..." />
+        </Card>
       ) : (
         <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
           <div>
             <DeviceInfoCard device={device} />
-            <div className="mt-4">
+            <div className="mt-4 flex items-center gap-3">
               <DiscoveryButton deviceId={device.id} onSuccess={loadInterfaces} />
+              <PollButton deviceId={device.id} onSuccess={() => { loadInterfaces(); /* refresh device */ getDevice(id!).then(setDevice).catch(()=>{}); }} />
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Interfaces</h2>
-              <div className="text-sm text-slate-400">{interfacesLoading ? "Refreshing..." : `${interfaces.length} interfaces`}</div>
-            </div>
-
-            <InterfaceTable interfaces={interfaces} />
+            <Card title={`Interfaces (${interfaces.length})`}>
+              {interfacesLoading ? (
+                <LoadingState message="Refreshing interfaces..." />
+              ) : interfaces.length === 0 ? (
+                <EmptyState title="No interfaces found" subtitle="Run discovery to populate interfaces." />
+              ) : (
+                <InterfaceTable interfaces={interfaces} />
+              )}
+            </Card>
           </div>
         </div>
       )}

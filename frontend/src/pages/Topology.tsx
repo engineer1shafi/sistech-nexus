@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import AppLayout from "../layouts/AppLayout";
 import { getTopologyLinks } from "../services/topologyApi";
+import Card from "../components/ui/Card";
+import PageHeader from "../components/ui/PageHeader";
+import EmptyState from "../components/ui/EmptyState";
+import LoadingState from "../components/ui/LoadingState";
 
 export default function Topology() {
   const [topology, setTopology] = useState<{ nodes: any[]; links: any[] }>({ nodes: [], links: [] });
@@ -15,40 +19,35 @@ export default function Topology() {
 
   return (
     <AppLayout>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Network Topology</h1>
-          <p className="text-slate-500">Topology preview and link summary</p>
-        </div>
-      </div>
+      <PageHeader title="Network Topology" subtitle="Topology preview and link summary" />
 
       <div className="grid gap-4 md:grid-cols-3 mb-6">
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <Card>
           <div className="text-slate-400 text-sm">Nodes</div>
           <div className="text-2xl font-semibold mt-2">{topology.nodes.length}</div>
-        </div>
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        </Card>
+        <Card>
           <div className="text-slate-400 text-sm">Links</div>
           <div className="text-2xl font-semibold mt-2">{topology.links.length}</div>
-        </div>
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        </Card>
+        <Card>
           <div className="text-slate-400 text-sm">Status</div>
           <div className="text-2xl font-semibold mt-2">Preview</div>
-        </div>
+        </Card>
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <Card>
         {loading ? (
-          <div className="text-slate-400">Loading topology...</div>
+          <LoadingState message="Loading topology..." />
         ) : topology.links.length === 0 ? (
-          <div className="text-center py-10 text-slate-400">No topology links found. Run discovery to populate the topology.</div>
+          <EmptyState title="No topology data" subtitle="Run LLDP discovery to populate topology." />
         ) : (
           <div>
             <div className="text-slate-300">Topology preview container (React Flow ready)</div>
             <div className="mt-4 h-96 border border-slate-800 rounded-lg" />
           </div>
         )}
-      </div>
+      </Card>
     </AppLayout>
   );
 }

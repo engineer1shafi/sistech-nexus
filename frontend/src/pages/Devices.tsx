@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
-import { Plus, Search, Wifi } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 import AppLayout from "../layouts/AppLayout";
 import DeviceFormModal from "../components/forms/DeviceFormModal";
 import DeviceTable from "../components/tables/DeviceTable";
 import { getDevices, runSNMPWalk, type SNMPWalkResponse } from "../services/deviceApi";
 import type { Device } from "../types/device";
+import PageHeader from "../components/ui/PageHeader";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import EmptyState from "../components/ui/EmptyState";
+import LoadingState from "../components/ui/LoadingState";
 
 export default function Devices() {
   const [devices, setDevices] = useState<Device[]>([]);
@@ -54,22 +59,13 @@ export default function Devices() {
 
   return (
     <AppLayout>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Device Inventory</h1>
-          <p className="text-slate-500">Manage network devices, servers and security appliances</p>
-        </div>
+      <PageHeader
+        title="Device Inventory"
+        subtitle="Manage network devices, servers and security appliances"
+        actions={<Button onClick={() => setModalOpen(true)}><Plus size={16} /> Add Device</Button>}
+      />
 
-        <button
-          onClick={() => setModalOpen(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-xl font-semibold"
-        >
-          <Plus size={18} />
-          Add Device
-        </button>
-      </div>
-
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+      <Card>
         <div className="relative">
           <Search className="absolute left-4 top-3.5 text-slate-500" size={20} />
           <input
@@ -79,14 +75,9 @@ export default function Devices() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-      </div>
+      </Card>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Wifi size={18} className="text-cyan-400" />
-          <h2 className="text-lg font-semibold">SNMP Walk Engine</h2>
-        </div>
-
+      <Card title="SNMP Walk Engine" className="mt-6">
         <div className="grid gap-4 md:grid-cols-[1.2fr_1.2fr_auto]">
           <input
             className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 outline-none focus:border-cyan-500"
@@ -100,13 +91,7 @@ export default function Devices() {
             value={walkOid}
             onChange={(e) => setWalkOid(e.target.value)}
           />
-          <button
-            onClick={handleWalk}
-            disabled={walkLoading}
-            className="bg-cyan-600 hover:bg-cyan-700 disabled:opacity-60 px-5 py-3 rounded-xl font-semibold"
-          >
-            {walkLoading ? "Running..." : "Run Walk"}
-          </button>
+          <Button onClick={handleWalk} disabled={walkLoading} className="justify-center">{walkLoading ? "Running..." : "Run Walk"}</Button>
         </div>
 
         {walkResult && (
@@ -126,15 +111,21 @@ export default function Devices() {
             )}
           </div>
         )}
-      </div>
+      </Card>
 
-      {loading ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center text-slate-500">
-          Loading devices...
-        </div>
-      ) : (
-        <DeviceTable devices={filteredDevices} />
-      )}
+      <div className="mt-6">
+        {loading ? (
+          <Card>
+            <LoadingState message="Loading devices..." />
+          </Card>
+        ) : filteredDevices.length === 0 ? (
+          <Card>
+            <EmptyState title="No devices" subtitle="Add devices using the Add Device button." />
+          </Card>
+        ) : (
+          <DeviceTable devices={filteredDevices} />
+        )}
+      </div>
 
       <DeviceFormModal
         open={modalOpen}
